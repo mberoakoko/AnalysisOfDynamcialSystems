@@ -18,14 +18,21 @@ class Plotter:
         x = np.linspace(x_range[0], x_range[1], num)
         y = np.linspace(y_range[0], y_range[1], num)
         x_, y_ = np.meshgrid(x, y)
-        gradients = (
-            system.dx(0, np.array([x_[section], y_[section]]))
-            for section in itertools.product(range(len(x)), range(len(y)))
-        )
-        gradients = np.array(list(gradients))
-        u, v = np.meshgrid(gradients[:, 0], gradients[:, 1])
-        plt.quiver(x_, y_, u, v, color="C1", scale_units="xy", units="xy")
+        temp_result = system.dx(0, np.array([x_, y_]))
+        u, v = temp_result[0, :, :], temp_result[1, :, :]
+        plt.streamplot(x_, y_, u, v, color=u, linewidth=0.7, cmap="autumn")
+        plt.quiver(x_, y_, u, v, color="C1", scale_units="xy", units="xy", width=0.005)
         plt.show()
+        # gradients = (
+        #     system.dx(0, np.array([x_[section], y_[section]]))
+        #     for section in itertools.product(range(len(x)), range(len(y)))
+        # )
+        # gradients = np.array(list(gradients))
+        # u, v = np.meshgrid(gradients[:, 0], gradients[:, 1])
+        # print(f"{gradients.shape=}")
+
+        # # plt.streamplot(x_, y_, u, v, color="C3")
+        # plt.show()
 
     @staticmethod
     def plot_tragectories(system: DynamicalSystem,
@@ -46,6 +53,7 @@ class Plotter:
             ax.plot(trajectory[0, :], trajectory[1, :], color="C4", linewidth=0.7)
 
         ax.set_title(f"Phase plot of {system.__class__.__name__}")
+        ax.grid(visible=True, linestyle="dashed", linewidth=0.7, zorder=-1, alpha=0.3)
         plt.tight_layout()
         plt.show()
 

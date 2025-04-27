@@ -20,6 +20,30 @@ class ViolinString(DynamicalSystem):
         ])
 
 
+@dataclasses.dataclass
+class PolarDiff(DynamicalSystem):
+    alpha: float = 1
+    beta: float = 2
+    omega: float = 3
+
+    def dx(self, t: float, x: np.ndarray) -> np.ndarray:
+        x_1, x_2 = x
+        return np.array([
+            x_1 * (self.alpha - x_1) * (self.beta - x_1) * (self.omega - x_1),
+            -1
+        ])
+
+
+@dataclasses.dataclass
+class Example3_4(DynamicalSystem):
+    def dx(self, t: float, x: np.ndarray) -> np.ndarray:
+        x_, y_ = x
+        return np.array([
+            y_ - 8 * x_ ** 3,
+            2*y_ - 4*x_ - 2*y_**3
+        ])
+
+
 if __name__ == "__main__":
-    violin_string_sys = ViolinString(epsilon=10)
-    print(violin_string_sys.dx(0, np.array([1, 1])))
+    violin_string_sys = PolarDiff()
+    print(violin_string_sys.dx(0, np.array([1, 3])))
